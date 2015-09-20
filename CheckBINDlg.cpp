@@ -301,9 +301,10 @@ void CCheckBINDlg::OnButtonOk_OnClick()
 	Sleep(500);//要求：视觉延时，让人能感觉到这个过程。。。
 	Sleep(300);//等待解压缩完成
 	m_ProgressCtrl.SetPos(40);
-	//5、获取BIN文件的文件名，因为是未知的，带后缀,BINFile_Name
+	//5、从txt文件里读取MD5和升级文件名字，保存在MD5_TXT_Val和BINFile_Name
 	CFileFind finder;
 	CString BINFile_Name[MAX_BIN_NUM];
+	CString MD5_TXT_Val[MAX_BIN_NUM];
 	BOOL bWorking = finder.FindFile((CString)CurrentDir_Buf + TEMP_SW_URL + "*");
 	BIN_NumCnt = 0;
 	while (bWorking)
@@ -314,8 +315,21 @@ void CCheckBINDlg::OnButtonOk_OnClick()
 		CString name = finder.GetFileName();
 		if(name.Right(3).CompareNoCase("txt") && name.Right(1).CompareNoCase("."))
 		{
-			BINFile_Name[BIN_NumCnt] = name;
-			BIN_NumCnt++;
+			CStdioFile fileR;
+			if(!fileR.Open((CString)CurrentDir_Buf + TEMP_SW_URL + name,CFile::modeRead,0))
+				break;
+			CString lineR;
+			while(fileR.ReadString(lineR))
+			{
+				int len = lineR.Find(" ");
+				if(len >0 )
+					MD5_TXT_Val[BIN_NumCnt] = lineR.Left(len);
+				len = lineR.ReverseFind(' ');
+				if(len >0 )
+					BINFile_Name[BIN_NumCnt] = lineR.Right(lineR.GetLength()-1-len);
+				BIN_NumCnt++;
+			}
+			fileR.Close();
 		}
 	  }
 	}
@@ -367,41 +381,7 @@ void CCheckBINDlg::OnButtonOk_OnClick()
 		MD5_UDisk_Val[i] = MD5_UDisk_Val[i].Left(MD5_UDisk_Val[i].GetLength()-1);
 	}
 	m_ProgressCtrl.SetPos(70);
-	//8、获取TXT里的MD5值，MD5_TXT_Val[MAX_BIN_NUM]
-	CStdioFile file;
-	CString MD5_TXT_Val[MAX_BIN_NUM];
-	for(int j = 0;j < BIN_NumCnt;j++)
-	{
-		if(!file.Open((CString)CurrentDir_Buf + TEMP_SW_URL + BINFile_Name[j].Left(BINFile_Name[j].GetLength() - 4) + _T("_MD5.txt"),CFile::modeRead,0))
-		{
-#if 1//没有检测到TXT，直接校验BIN
-			Log_ShowInList(_T("提示：未使用TXT进行校验,直接比较BIN文件"));
-			for(int j1 = 0;j1 < BIN_NumCnt;j1 ++)
-			{
-				MD5_TXT_Val[j1] = ValueMD5((CString)CurrentDir_Buf + TEMP_SW_URL + BINFile_Name[j]);
-				MD5_TXT_Val[j1] = MD5_TXT_Val[j1].Left(MD5_TXT_Val[j1].GetLength()-1);
-			}
-			break;
-#else
-			Log_ShowInList(_T("未发现TXT文件，确认名字是否符合规则..."));
-			isRuningCopy = FALSE;
-			if(isAutoMode)
-				OnButtonAuto_OnClick();
-#if 1//是否在检测到MD5错误时强制删除U盘里的BIN文件
-			CurrentDir_Buf_C.ReleaseBuffer();
-			CurrentDir_Buf_C = _T("Cmd.exe /C del ") + (CString)UDisk_Path + _T("*.bin");
-			CurrentDir_Buf_P = (LPSTR)(LPCTSTR)CurrentDir_Buf_C;
-			WinExec(CurrentDir_Buf_P, SW_HIDE);
-#endif
-#endif
-			return ;
-		}
-		file.ReadString(MD5_TXT_Val[j]);
-		int len = MD5_TXT_Val[j].Find(" ");
-		if(len >0 )
-			MD5_TXT_Val[j] = MD5_TXT_Val[j].Left(len);
-		file.Close();
-	}
+
 	Sleep(500);//要求：视觉延时，让人能感觉到这个过程。。。
 	m_ProgressCtrl.SetPos(80);
 	//9、比较两个MD5值
