@@ -1,0 +1,2 @@
+
+int		RemovalUDisk(TCHAR* disk);
