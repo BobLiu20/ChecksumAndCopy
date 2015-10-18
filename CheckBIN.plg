@@ -6,13 +6,8 @@
 --------------------Configuration: CheckBIN - Win32 Release--------------------
 </h3>
 <h3>Command Lines</h3>
-Creating temporary file "C:\Users\user\AppData\Local\Temp\RSP3D41.tmp" with contents
-[
-/nologo /MT /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /Fp"Release/CheckBIN.pch" /Yu"stdafx.h" /Fo"Release/" /Fd"Release/" /FD /c 
-"F:\VC\ChecksumAndCopy\CheckBINDlg.cpp"
-]
-Creating command line "cl.exe @C:\Users\user\AppData\Local\Temp\RSP3D41.tmp" 
-Creating temporary file "C:\Users\user\AppData\Local\Temp\RSP3D42.tmp" with contents
+Creating command line "rc.exe /l 0x804 /fo"Release/CheckBIN.res" /d "NDEBUG" "F:\VC\ChecksumAndCopy\CheckBIN.rc"" 
+Creating temporary file "C:\Users\user\AppData\Local\Temp\RSPB40D.tmp" with contents
 [
 /nologo /subsystem:windows /incremental:no /pdb:"Release/CheckBIN.pdb" /machine:I386 /out:"Release/CheckBIN.exe" 
 .\Release\CheckBIN.obj
@@ -22,10 +17,9 @@ Creating temporary file "C:\Users\user\AppData\Local\Temp\RSP3D42.tmp" with cont
 .\Release\StdAfx.obj
 .\Release\CheckBIN.res
 ]
-Creating command line "link.exe @C:\Users\user\AppData\Local\Temp\RSP3D42.tmp"
+Creating command line "link.exe @C:\Users\user\AppData\Local\Temp\RSPB40D.tmp"
 <h3>Output Window</h3>
-Compiling...
-CheckBINDlg.cpp
+Compiling resources...
 Linking...
 
 

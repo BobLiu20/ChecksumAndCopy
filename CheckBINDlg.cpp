@@ -313,7 +313,7 @@ void CCheckBINDlg::OnButtonOk_OnClick()
 	  if(BIN_NumCnt < MAX_BIN_NUM)//连续找出所有BIN名字，不带.bin
 	  {
 		CString name = finder.GetFileName();
-		if(name.Right(3).CompareNoCase("txt") && name.Right(1).CompareNoCase("."))
+		if(name.Right(3).CompareNoCase("txt") == 0)
 		{
 			CStdioFile fileR;
 			if(!fileR.Open((CString)CurrentDir_Buf + TEMP_SW_URL + name,CFile::modeRead,0))
@@ -323,11 +323,16 @@ void CCheckBINDlg::OnButtonOk_OnClick()
 			{
 				int len = lineR.Find(" ");
 				if(len >0 )
+				{
 					MD5_TXT_Val[BIN_NumCnt] = lineR.Left(len);
-				len = lineR.ReverseFind(' ');
-				if(len >0 )
-					BINFile_Name[BIN_NumCnt] = lineR.Right(lineR.GetLength()-1-len);
-				BIN_NumCnt++;
+					len = lineR.ReverseFind(' ');
+					if(len >0 )
+					{
+						BINFile_Name[BIN_NumCnt] = lineR.Right(lineR.GetLength()-1-len);
+						BIN_NumCnt++;
+					}
+				}
+				
 			}
 			fileR.Close();
 		}
